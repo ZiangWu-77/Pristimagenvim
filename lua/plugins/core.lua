@@ -7,23 +7,60 @@ return {
 		priority = 1000,
 		opts = {},
 	},
+	-- {
+	-- 	"ckipp01/stylua-nvim",
+	-- 	config = function()
+	-- 		-- Keymap for manual formatting
+	-- 		vim.keymap.set("n", "f", function()
+	-- 			require("stylua-nvim").format_file()
+	-- 		end, { noremap = true, silent = true, desc = "Format Lua file with StyLua" })
+	--
+	-- 		-- Autocmd for formatting on save
+	-- 		local stylua_group = vim.api.nvim_create_augroup("StyluaFormatting", { clear = true })
+	-- 		vim.api.nvim_create_autocmd("BufWritePre", {
+	-- 			pattern = "*.lua",
+	-- 			group = stylua_group,
+	-- 			callback = function()
+	-- 				require("stylua-nvim").format_file()
+	-- 			end,
+	-- 		})
+	-- 	end,
+	-- },
 	{
-		"ckipp01/stylua-nvim",
-		config = function()
-			-- Keymap for manual formatting
-			vim.keymap.set("n", "f", function()
-				require("stylua-nvim").format_file()
-			end, { noremap = true, silent = true, desc = "Format Lua file with StyLua" })
+		-- Install conform.nvim
+		"stevearc/conform.nvim",
+		-- This is not a required dependency, but it's often useful to install formatters automatically
+		dependencies = { "mason.nvim" },
+		opts = {
+			-- Map of filetypes to the formatters to use
+			-- The first formatter in the list will be the default
+			formatters_by_ft = {
+				lua = { "stylua" },
+				-- Conform will run multiple formatters sequentially
+				python = { "isort", "black" },
+				-- Use a sub-list to run only the first available formatter
+				javascript = { { "prettierd", "prettier" } },
+				typescript = { { "prettierd", "prettier" } },
+				html = { { "prettierd", "prettier" } },
+				css = { { "prettierd", "prettier" } },
+				json = { { "prettierd", "prettier" } },
+				yaml = { { "prettierd", "prettier" } },
+				markdown = { { "prettierd", "prettier" } },
 
-			-- Autocmd for formatting on save
-			local stylua_group = vim.api.nvim_create_augroup("StyluaFormatting", { clear = true })
-			vim.api.nvim_create_autocmd("BufWritePre", {
-				pattern = "*.lua",
-				group = stylua_group,
-				callback = function()
-					require("stylua-nvim").format_file()
-				end,
-			})
+				-- IMPORTANT: Do not add an entry for 'oil' filetype here
+				-- This ensures no formatter will be attached to oil buffers
+			},
+
+			-- Configure saving files to trigger formatting
+			format_on_save = {
+				-- This is the recommended synchronous way of formatting on save
+				lsp_fallback = true,
+				async = false,
+				timeout_ms = 1000,
+			},
+		},
+		config = function(_, opts)
+			require("conform").setup(opts)
 		end,
 	},
 	-- LSP and tooling
@@ -323,7 +360,7 @@ return {
 			-- Add other configurations from your snippet here...
 		},
 		-- Optional dependencies
-		dependencies = { { "echasnovski/mini.icons", opts = {} } },
+		dependencies = { { "nvim-telescope/telescope.nvim" }, { "echasnovski/mini.icons", opts = {} } },
 		-- Lazy loading is not recommended for oil.nvim
 		lazy = false,
 		keys = {
@@ -374,6 +411,70 @@ return {
 				end,
 				desc = "Copy absolute path",
 			},
+			{
+				"<leader>fo", -- You can change this to any keybinding you like
+				function()
+					local default_path
+
+					-- 1. Check if the current buffer is an oil buffer
+					if vim.bo.filetype == "oil" then
+						-- If it is, get the buffer name (e.g., "oil:///path/to/dir")
+						local oil_buf_name = vim.api.nvim_buf_get_name(0)
+						-- Remove the "oil://" prefix to get the real file system path
+						-- The gsub function here replaces "oil://" at the start of the string with an empty string
+						default_path = vim.fn.fnamemodify(oil_buf_name:gsub("^oil://", ""), ":h")
+					else
+						local current_buf_name = vim.api.nvim_buf_get_name(0)
+						-- 2. If it's a regular buffer, check if it has a file name
+						if current_buf_name ~= "" then
+							-- If it has a name, use its directory as the default
+							default_path = vim.fn.expand("%:p:h")
+						else
+							-- 3. If it's a new/unnamed buffer, use the current working directory
+							default_path = vim.fn.getcwd()
+						end
+					end
+
+					local path_input = vim.fn.input({
+						prompt = "Open directory in Oil: ",
+						-- Ensure the default path always ends with a separator for a better user experience
+						default = default_path .. "/",
+						completion = "dir",
+					})
+
+					if path_input == "" then
+						print("Oil open cancelled.")
+						return
+					end
+
+					require("oil").open(vim.fn.expand(path_input))
+				end,
+				desc = "Open a directory in Oil with prompt",
+			},
+			-- {
+			-- 	"<leader>fo", -- 你可以把它改成任何你喜欢的快捷键
+			-- 	function()
+			-- 		-- 1. 调用内置输入函数，向用户索要路径
+			-- 		local path_input = vim.fn.input({
+			-- 			prompt = "Open directory in Oil: ",
+			-- 			-- 默认值：当前文件所在的目录。如果当前是新 buffer，则为当前工作目录
+			-- 			default = vim.fn.expand("%:p:h") .. "/",
+			-- 			-- 开启目录补全功能！你可以在输入时按 Tab
+			-- 			completion = "dir",
+			-- 		})
+			--
+			-- 		-- 2. 如果用户按 Esc 或直接回车（输入为空），则取消操作
+			-- 		if path_input == "" then
+			-- 			print("Oil open cancelled.")
+			-- 			return
+			-- 		end
+			--
+			-- 		-- 3. 使用 oil.open 打开用户输入的路径
+			-- 		--    我们用 vim.fn.expand 来处理像 '~' 这样的特殊字符
+			-- 		require("oil").open(vim.fn.expand(path_input))
+			-- 	end,
+			-- 	desc = "Open a directory in Oil with prompt",
+			-- },
 		},
 		-- 添加这个 config 函数
 		config = function(_, opts)
