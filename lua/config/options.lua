@@ -28,6 +28,6 @@ vim.opt.smartcase = true -- but make it case sensitive if an uppercase is entere
 vim.opt.whichwrap:append("<,>,h,l")
 
 -- For j and k wrapping at file top/bottom, using concise expressions
-local opts = { expr = true, silent = true, desc = "上下环绕" }
-vim.keymap.set("n", "j", "line('.') == line('$') ? 'gg' : 'j'", opts)
-vim.keymap.set("n", "k", "line('.') == 1 ? 'G' : 'k'", opts)
+-- local opts = { expr = true, silent = true, desc = "上下环绕" }
+-- vim.keymap.set("n", "j", "line('.') == line('$') ? 'gg' : 'j'", opts)
+-- vim.keymap.set("n", "k", "line('.') == 1 ? 'G' : 'k'", opts)

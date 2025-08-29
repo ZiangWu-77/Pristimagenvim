@@ -53,3 +53,30 @@ vim.keymap.set({ "n", "i", "v", "c" }, "<C-s>", function()
 	end
 	vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", false)
 end, { noremap = true, silent = true, desc = "Save current file" })
+
+-- in lua/core/keymaps.lua
+
+local keymap = vim.keymap
+
+-- A safe way to close the buffer using bufferline
+-- 使用 bufferline 来安全关闭缓冲区的函数
+local function safe_close_buffer()
+	-- pcall stands for "protected call".
+	-- It will try to run the code, but won't throw an error if it fails.
+	-- pcall 是“受保护的调用”，它会尝试运行代码，但如果失败了也不会抛出错误。
+	local success, bufferline = pcall(require, "bufferline")
+
+	if success then
+		-- If the 'bufferline' module was loaded successfully, close the buffer.
+		-- 如果 'bufferline' 模块被成功加载，就关闭缓冲区。
+		bufferline.close_buffer()
+	else
+		-- If it failed (plugin not loaded yet), fall back to the native command.
+		-- 如果失败了（插件还没加载），就回退到使用原生命令。
+		vim.cmd("bd")
+	end
+end
+
+-- Now, map the key to this safe function.
+-- 现在，把快捷键映射到这个安全的函数上。
+keymap.set("n", "<leader>c", safe_close_buffer, { desc = "Close current buffer (safe)" })
