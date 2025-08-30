@@ -7,6 +7,41 @@ return {
 		priority = 1000,
 		opts = {},
 	},
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
+		priority = 1000,
+		opts = {
+			flavour = "mocha", -- latte, frappe, macchiato, mocha
+			-- 也可以开启透明背景
+			-- transparent_background = true,
+		},
+	},
+	{
+		"sainnhe/gruvbox-material",
+		name = "gruvbox-material",
+		priority = 1000,
+	},
+	{
+		"rose-pine/neovim",
+		name = "rose-pine",
+		priority = 1000,
+		opts = {
+			variant = "auto", -- auto, main, moon, or dawn
+			dark_variant = "moon", -- default is main
+		},
+	},
+	{
+		"sainnhe/everforest",
+		name = "everforest",
+		priority = 1000,
+	},
+	{
+		"hardhackerlabs/theme-vim",
+		name = "hardhacker",
+		lazy = false,
+		priority = 1000,
+	},
 	-- {
 	-- 	"ckipp01/stylua-nvim",
 	-- 	config = function()
@@ -132,6 +167,9 @@ return {
 	-- ===================================================================
 	-- II. 补全引擎：nvim-cmp
 	-- ===================================================================
+	{ "hrsh7th/cmp-buffer" },
+	{ "hrsh7th/cmp-path" },
+	{ "hrsh7th/cmp-cmdline" },
 	{
 		"hrsh7th/nvim-cmp",
 		event = "InsertEnter", -- 插入模式时再加载
@@ -141,6 +179,12 @@ return {
 			"hrsh7th/cmp-path", -- 文件路径补全源
 			"L3MON4D3/LuaSnip", -- Snippet 引擎
 			"saadparwaiz1/cmp_luasnip", -- Snippet 补全源
+			-- ... 你其他的 cmp 源
+			"hrsh7th/cmp-buffer",
+			"hrsh7th/cmp-path",
+			-- highlight-start
+			"hrsh7th/cmp-cmdline",
+			-- highlight-end
 		},
 		config = function()
 			local cmp = require("cmp")
@@ -185,6 +229,17 @@ return {
 					{ name = "buffer" },
 					{ name = "path" },
 				}),
+				configs = {
+					{
+						-- For the ':' command line
+						mode = "c",
+						sources = {
+							{ name = "path" }, -- 文件路径补全
+							{ name = "cmdline" }, -- 命令补全
+							{ name = "buffer" }, -- Buffer 补全
+						},
+					},
+				},
 			})
 		end,
 	},
@@ -228,313 +283,313 @@ return {
 		},
 	},
 
-	{
-		"nvim-tree/nvim-tree.lua",
-		version = "*",
-		lazy = false,
-		dependencies = {
-			"nvim-tree/nvim-web-devicons",
-		},
-		config = function()
-			-- disable netrw at the very start of your init.lua
-			-- This is important to let nvim-tree handle directory opening
-			vim.g.loaded_netrw = 1
-			vim.g.loaded_netrwPlugin = 1
-
-			-- set termguicolors to enable highlight groups
-			vim.opt.termguicolors = true
-
-			require("nvim-tree").setup({
-				-- A list of options, for example:
-				sort_by = "case_sensitive",
-				view = {
-					width = 30,
-				},
-				renderer = {
-					group_empty = true,
-				},
-				filters = {
-					dotfiles = true,
-				},
-			})
-
-			-- Setup keymaps
-			local keymap = vim.keymap
-			-- Toggle file explorer
-			keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
-			-- Find the current file in the explorer
-			keymap.set("n", "<leader>o", "<cmd>NvimTreeFindFile<CR>", { desc = "Open file explorer to current file" })
-		end,
-	},
 	-- {
-	-- 	"stevearc/oil.nvim",
-	-- 	---@module 'oil'
-	-- 	---@type oil.SetupOpts
-	-- 	opts = {
-	-- 		-- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
-	-- 		-- Set to false if you want some other plugin (e.g. netrw) to open when you edit directories.
-	-- 		default_file_explorer = true,
-	-- 		-- Id is automatically added at the beginning, and name at the end
-	-- 		-- See :help oil-columns
-	-- 		columns = {
-	-- 			"icon",
-	-- 			-- "permissions",
-	-- 			-- "size",
-	-- 			-- "mtime",
-	-- 		},
-	-- 		-- Buffer-local options to use for oil buffers
-	-- 		buf_options = {
-	-- 			buflisted = false,
-	-- 			bufhidden = "hide",
-	-- 		},
-	-- 		-- Window-local options to use for oil buffers
-	-- 		win_options = {
-	-- 			wrap = false,
-	-- 			signcolumn = "no",
-	-- 			cursorcolumn = false,
-	-- 			foldcolumn = "0",
-	-- 			spell = false,
-	-- 			list = false,
-	-- 			conceallevel = 3,
-	-- 			concealcursor = "nvic",
-	-- 		},
-	-- 		-- Send deleted files to the trash instead of permanently deleting them (:help oil-trash)
-	-- 		delete_to_trash = true,
-	-- 		-- Skip the confirmation popup for simple operations (:help oil.skip_confirm_for_simple_edits)
-	-- 		skip_confirm_for_simple_edits = false,
-	-- 		-- Selecting a new/moved/renamed file or directory will prompt you to save changes first
-	-- 		-- (:help prompt_save_on_select_new_entry)
-	-- 		prompt_save_on_select_new_entry = true,
-	-- 		-- Oil will automatically delete hidden buffers after this delay
-	-- 		-- You can set the delay to false to disable cleanup entirely
-	-- 		-- Note that the cleanup process only starts when none of the oil buffers are currently displayed
-	-- 		cleanup_delay_ms = 2000,
-	-- 		lsp_file_methods = {
-	-- 			-- Enable or disable LSP file operations
-	-- 			enabled = true,
-	-- 			-- Time to wait for LSP file operations to complete before skipping
-	-- 			timeout_ms = 1000,
-	-- 			-- Set to true to autosave buffers that are updated with LSP willRenameFiles
-	-- 			-- Set to "unmodified" to only save unmodified buffers
-	-- 			autosave_changes = false,
-	-- 		},
-	-- 		-- Constrain the cursor to the editable parts of the oil buffer
-	-- 		-- Set to `false` to disable, or "name" to keep it on the file names
-	-- 		constrain_cursor = "editable",
-	-- 		-- Set to true to watch the filesystem for changes and reload oil
-	-- 		watch_for_changes = false,
-	-- 		-- Keymaps in oil buffer.
-	-- 		-- See :help oil-actions for a list of all available actions
-	-- 		keymaps = {
-	-- 			["g?"] = { "actions.show_help", mode = "n" },
-	-- 			["<CR>"] = "actions.select",
-	-- 			["<C-s>"] = { "actions.select", opts = { vertical = true } },
-	-- 			["<C-h>"] = { "actions.select", opts = { horizontal = true } },
-	-- 			["<C-t>"] = { "actions.select", opts = { tab = true } },
-	-- 			["<C-p>"] = "actions.preview",
-	-- 			["<C-c>"] = { "actions.close", mode = "n" },
-	-- 			["<C-l>"] = "actions.refresh",
-	-- 			["-"] = { "actions.parent", mode = "n" },
-	-- 			["_"] = { "actions.open_cwd", mode = "n" },
-	-- 			["`"] = { "actions.cd", mode = "n" },
-	-- 			["~"] = { "actions.cd", opts = { scope = "tab" }, mode = "n" },
-	-- 			["gs"] = { "actions.change_sort", mode = "n" },
-	-- 			["gx"] = "actions.open_external",
-	-- 			["g."] = { "actions.toggle_hidden", mode = "n" },
-	-- 			["g\\"] = { "actions.toggle_trash", mode = "n" },
-	-- 			["ge"] = {
-	-- 				desc = "Toggle file detailed view",
-	-- 				callback = function()
-	-- 					detail = not detail
-	-- 					if detail then
-	-- 						require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
-	-- 					else
-	-- 						require("oil").set_columns({ "icon" })
-	-- 					end
-	-- 				end,
-	-- 			},
-	-- 		},
-	-- 		-- Set to false to disable all of the above keymaps
-	-- 		use_default_keymaps = true,
-	-- 		view_options = {
-	-- 			-- Show files and directories that start with "."
-	-- 			show_hidden = false,
-	-- 			-- This function defines what is considered a "hidden" file
-	-- 			is_hidden_file = function(name, bufnr)
-	-- 				local m = name:match("^%.")
-	-- 				return m ~= nil
-	-- 			end,
-	-- 			-- This function defines what will never be shown, even when `show_hidden` is set
-	-- 			is_always_hidden = function(name, bufnr)
-	-- 				return false
-	-- 			end,
-	-- 			-- Sort file names with numbers in a more intuitive order for humans.
-	-- 			-- Can be "fast", true, or false. "fast" will turn it off for large directories.
-	-- 			natural_order = "fast",
-	-- 			-- Sort file and directory names case insensitive
-	-- 			case_insensitive = false,
-	-- 			sort = {
-	-- 				-- sort order can be "asc" or "desc"
-	-- 				-- see :help oil-columns to see which columns are sortable
-	-- 				{ "type", "asc" },
-	-- 				{ "name", "asc" },
-	-- 			},
-	-- 		},
-	-- 		-- Configuration for the floating window in oil.open_float
-	-- 		float = {
-	-- 			-- Padding around the floating window
-	-- 			padding = 2,
-	-- 			max_width = 0,
-	-- 			max_height = 0,
-	-- 			border = "rounded",
-	-- 			win_options = {
-	-- 				winblend = 0,
-	-- 			},
-	-- 			-- This is the config that will be passed to nvim_open_win.
-	-- 			-- Change values here to customize the layout
-	-- 			override = function(conf)
-	-- 				return conf
-	-- 			end,
-	-- 		},
-	-- 		-- Add other configurations from your snippet here...
-	-- 	},
-	-- 	-- Optional dependencies
-	-- 	dependencies = { { "nvim-telescope/telescope.nvim" }, { "echasnovski/mini.icons", opts = {} } },
-	-- 	-- Lazy loading is not recommended for oil.nvim
+	-- 	"nvim-tree/nvim-tree.lua",
+	-- 	version = "*",
 	-- 	lazy = false,
-	-- 	keys = {
-	-- 		-- 这是你的开关快捷键
-	-- 		{
-	-- 			"<leader>e", -- 你想绑定的按键 (可以换成别的，比如 "<leader>e")
-	-- 			function()
-	-- 				-- 这里的逻辑和 :OilToggle 命令里的完全一样
-	-- 				local oil = require("oil")
-	-- 				if vim.bo.filetype == "oil" then
-	-- 					oil.close()
-	-- 				else
-	-- 					oil.open()
-	-- 				end
-	-- 			end,
-	-- 			desc = "Toggle Oil (File Explorer)", -- which-key 的描述
-	-- 		},
-	-- 		{
-	-- 			"<leader>di", -- "d" for debug, "i" for inspect
-	-- 			function()
-	-- 				-- Get the entry under the cursor
-	-- 				local entry = require("oil").get_cursor_entry()
-	-- 				-- Print it in a human-readable format
-	-- 				print(vim.inspect(entry))
-	-- 			end,
-	-- 			desc = "[D]ebug: [I]nspect oil entry",
-	-- 		},
-	-- 		{
-	-- 			"gy",
-	-- 			function()
-	-- 				-- 1. 获取当前 oil 窗口正在浏览的目录路径
-	-- 				local dir = require("oil").get_current_dir()
-	--
-	-- 				-- 2. 获取光标下条目的信息 (主要需要它的名字)
-	-- 				local entry = require("oil").get_cursor_entry()
-	--
-	-- 				-- 3. 确保我们成功获取了目录和条目信息
-	-- 				if dir and entry and entry.name then
-	-- 					-- 4. 使用 vim 的标准函数来安全地拼接路径 (这是最稳妥的做法)
-	-- 					local path = vim.fs.joinpath(dir, entry.name)
-	--
-	-- 					-- 5. 将拼接好的完整路径复制到系统剪贴板
-	-- 					vim.fn.setreg("+", path)
-	-- 					print("已复制路径: " .. path)
-	-- 				else
-	-- 					print("无法获取路径信息")
-	-- 				end
-	-- 			end,
-	-- 			desc = "Copy absolute path",
-	-- 		},
-	-- 		{
-	-- 			"<leader>fo", -- You can change this to any keybinding you like
-	-- 			function()
-	-- 				local default_path
-	--
-	-- 				-- 1. Check if the current buffer is an oil buffer
-	-- 				if vim.bo.filetype == "oil" then
-	-- 					-- If it is, get the buffer name (e.g., "oil:///path/to/dir")
-	-- 					local oil_buf_name = vim.api.nvim_buf_get_name(0)
-	-- 					-- Remove the "oil://" prefix to get the real file system path
-	-- 					-- The gsub function here replaces "oil://" at the start of the string with an empty string
-	-- 					default_path = vim.fn.fnamemodify(oil_buf_name:gsub("^oil://", ""), ":h")
-	-- 				else
-	-- 					local current_buf_name = vim.api.nvim_buf_get_name(0)
-	-- 					-- 2. If it's a regular buffer, check if it has a file name
-	-- 					if current_buf_name ~= "" then
-	-- 						-- If it has a name, use its directory as the default
-	-- 						default_path = vim.fn.expand("%:p:h")
-	-- 					else
-	-- 						-- 3. If it's a new/unnamed buffer, use the current working directory
-	-- 						default_path = vim.fn.getcwd()
-	-- 					end
-	-- 				end
-	--
-	-- 				local path_input = vim.fn.input({
-	-- 					prompt = "Open directory in Oil: ",
-	-- 					-- Ensure the default path always ends with a separator for a better user experience
-	-- 					default = default_path .. "/",
-	-- 					completion = "dir",
-	-- 				})
-	--
-	-- 				if path_input == "" then
-	-- 					print("Oil open cancelled.")
-	-- 					return
-	-- 				end
-	--
-	-- 				require("oil").open(vim.fn.expand(path_input))
-	-- 			end,
-	-- 			desc = "Open a directory in Oil with prompt",
-	-- 		},
-	-- 		-- {
-	-- 		-- 	"<leader>fo", -- 你可以把它改成任何你喜欢的快捷键
-	-- 		-- 	function()
-	-- 		-- 		-- 1. 调用内置输入函数，向用户索要路径
-	-- 		-- 		local path_input = vim.fn.input({
-	-- 		-- 			prompt = "Open directory in Oil: ",
-	-- 		-- 			-- 默认值：当前文件所在的目录。如果当前是新 buffer，则为当前工作目录
-	-- 		-- 			default = vim.fn.expand("%:p:h") .. "/",
-	-- 		-- 			-- 开启目录补全功能！你可以在输入时按 Tab
-	-- 		-- 			completion = "dir",
-	-- 		-- 		})
-	-- 		--
-	-- 		-- 		-- 2. 如果用户按 Esc 或直接回车（输入为空），则取消操作
-	-- 		-- 		if path_input == "" then
-	-- 		-- 			print("Oil open cancelled.")
-	-- 		-- 			return
-	-- 		-- 		end
-	-- 		--
-	-- 		-- 		-- 3. 使用 oil.open 打开用户输入的路径
-	-- 		-- 		--    我们用 vim.fn.expand 来处理像 '~' 这样的特殊字符
-	-- 		-- 		require("oil").open(vim.fn.expand(path_input))
-	-- 		-- 	end,
-	-- 		-- 	desc = "Open a directory in Oil with prompt",
-	-- 		-- },
+	-- 	dependencies = {
+	-- 		"nvim-tree/nvim-web-devicons",
 	-- 	},
-	-- 	-- 添加这个 config 函数
-	-- 	config = function(_, opts)
-	-- 		-- 调用默认的 setup 函数
-	-- 		require("oil").setup(opts)
+	-- 	config = function()
+	-- 		-- disable netrw at the very start of your init.lua
+	-- 		-- This is important to let nvim-tree handle directory opening
+	-- 		vim.g.loaded_netrw = 1
+	-- 		vim.g.loaded_netrwPlugin = 1
 	--
-	-- 		-- 在这里放入你的自定义命令
-	-- 		vim.api.nvim_create_user_command("OilToggle", function()
-	-- 			local current_buf = vim.api.nvim_get_current_buf()
-	-- 			local current_filetype = vim.api.nvim_buf_get_option(current_buf, "filetype")
+	-- 		-- set termguicolors to enable highlight groups
+	-- 		vim.opt.termguicolors = true
 	--
-	-- 			if current_filetype == "oil" then
-	-- 				-- We use a command to go to the previous buffer
-	-- 				vim.cmd("b#")
-	-- 			else
-	-- 				-- Open oil if not already in an oil buffer
-	-- 				vim.cmd("Oil")
-	-- 			end
-	-- 		end, { nargs = 0 })
+	-- 		require("nvim-tree").setup({
+	-- 			-- A list of options, for example:
+	-- 			sort_by = "case_sensitive",
+	-- 			view = {
+	-- 				width = 30,
+	-- 			},
+	-- 			renderer = {
+	-- 				group_empty = true,
+	-- 			},
+	-- 			filters = {
+	-- 				dotfiles = true,
+	-- 			},
+	-- 		})
+	--
+	-- 		-- Setup keymaps
+	-- 		local keymap = vim.keymap
+	-- 		-- Toggle file explorer
+	-- 		keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<CR>", { desc = "Toggle file explorer" })
+	-- 		-- Find the current file in the explorer
+	-- 		keymap.set("n", "<leader>o", "<cmd>NvimTreeFindFile<CR>", { desc = "Open file explorer to current file" })
 	-- 	end,
 	-- },
+	{
+		"stevearc/oil.nvim",
+		---@module 'oil'
+		---@type oil.SetupOpts
+		opts = {
+			-- Oil will take over directory buffers (e.g. `vim .` or `:e src/`)
+			-- Set to false if you want some other plugin (e.g. netrw) to open when you edit directories.
+			default_file_explorer = true,
+			-- Id is automatically added at the beginning, and name at the end
+			-- See :help oil-columns
+			columns = {
+				"icon",
+				-- "permissions",
+				-- "size",
+				-- "mtime",
+			},
+			-- Buffer-local options to use for oil buffers
+			buf_options = {
+				buflisted = false,
+				bufhidden = "hide",
+			},
+			-- Window-local options to use for oil buffers
+			win_options = {
+				wrap = false,
+				signcolumn = "no",
+				cursorcolumn = false,
+				foldcolumn = "0",
+				spell = false,
+				list = false,
+				conceallevel = 3,
+				concealcursor = "nvic",
+			},
+			-- Send deleted files to the trash instead of permanently deleting them (:help oil-trash)
+			delete_to_trash = true,
+			-- Skip the confirmation popup for simple operations (:help oil.skip_confirm_for_simple_edits)
+			skip_confirm_for_simple_edits = false,
+			-- Selecting a new/moved/renamed file or directory will prompt you to save changes first
+			-- (:help prompt_save_on_select_new_entry)
+			prompt_save_on_select_new_entry = true,
+			-- Oil will automatically delete hidden buffers after this delay
+			-- You can set the delay to false to disable cleanup entirely
+			-- Note that the cleanup process only starts when none of the oil buffers are currently displayed
+			cleanup_delay_ms = 2000,
+			lsp_file_methods = {
+				-- Enable or disable LSP file operations
+				enabled = true,
+				-- Time to wait for LSP file operations to complete before skipping
+				timeout_ms = 1000,
+				-- Set to true to autosave buffers that are updated with LSP willRenameFiles
+				-- Set to "unmodified" to only save unmodified buffers
+				autosave_changes = false,
+			},
+			-- Constrain the cursor to the editable parts of the oil buffer
+			-- Set to `false` to disable, or "name" to keep it on the file names
+			constrain_cursor = "editable",
+			-- Set to true to watch the filesystem for changes and reload oil
+			watch_for_changes = false,
+			-- Keymaps in oil buffer.
+			-- See :help oil-actions for a list of all available actions
+			keymaps = {
+				["g?"] = { "actions.show_help", mode = "n" },
+				["<CR>"] = "actions.select",
+				["<C-s>"] = { "actions.select", opts = { vertical = true } },
+				["<C-h>"] = { "actions.select", opts = { horizontal = true } },
+				["<C-t>"] = { "actions.select", opts = { tab = true } },
+				["<C-p>"] = "actions.preview",
+				["<C-c>"] = { "actions.close", mode = "n" },
+				["<C-l>"] = "actions.refresh",
+				["-"] = { "actions.parent", mode = "n" },
+				["_"] = { "actions.open_cwd", mode = "n" },
+				["`"] = { "actions.cd", mode = "n" },
+				["~"] = { "actions.cd", opts = { scope = "tab" }, mode = "n" },
+				["gs"] = { "actions.change_sort", mode = "n" },
+				["gx"] = "actions.open_external",
+				["g."] = { "actions.toggle_hidden", mode = "n" },
+				["g\\"] = { "actions.toggle_trash", mode = "n" },
+				["ge"] = {
+					desc = "Toggle file detailed view",
+					callback = function()
+						detail = not detail
+						if detail then
+							require("oil").set_columns({ "icon", "permissions", "size", "mtime" })
+						else
+							require("oil").set_columns({ "icon" })
+						end
+					end,
+				},
+			},
+			-- Set to false to disable all of the above keymaps
+			use_default_keymaps = true,
+			view_options = {
+				-- Show files and directories that start with "."
+				show_hidden = false,
+				-- This function defines what is considered a "hidden" file
+				is_hidden_file = function(name, bufnr)
+					local m = name:match("^%.")
+					return m ~= nil
+				end,
+				-- This function defines what will never be shown, even when `show_hidden` is set
+				is_always_hidden = function(name, bufnr)
+					return false
+				end,
+				-- Sort file names with numbers in a more intuitive order for humans.
+				-- Can be "fast", true, or false. "fast" will turn it off for large directories.
+				natural_order = "fast",
+				-- Sort file and directory names case insensitive
+				case_insensitive = false,
+				sort = {
+					-- sort order can be "asc" or "desc"
+					-- see :help oil-columns to see which columns are sortable
+					{ "type", "asc" },
+					{ "name", "asc" },
+				},
+			},
+			-- Configuration for the floating window in oil.open_float
+			float = {
+				-- Padding around the floating window
+				padding = 2,
+				max_width = 0,
+				max_height = 0,
+				border = "rounded",
+				win_options = {
+					winblend = 0,
+				},
+				-- This is the config that will be passed to nvim_open_win.
+				-- Change values here to customize the layout
+				override = function(conf)
+					return conf
+				end,
+			},
+			-- Add other configurations from your snippet here...
+		},
+		-- Optional dependencies
+		dependencies = { { "nvim-telescope/telescope.nvim" }, { "echasnovski/mini.icons", opts = {} } },
+		-- Lazy loading is not recommended for oil.nvim
+		lazy = false,
+		keys = {
+			-- 这是你的开关快捷键
+			{
+				"<leader>e", -- 你想绑定的按键 (可以换成别的，比如 "<leader>e")
+				function()
+					-- 这里的逻辑和 :OilToggle 命令里的完全一样
+					local oil = require("oil")
+					if vim.bo.filetype == "oil" then
+						oil.close()
+					else
+						oil.open()
+					end
+				end,
+				desc = "Toggle Oil (File Explorer)", -- which-key 的描述
+			},
+			{
+				"<leader>di", -- "d" for debug, "i" for inspect
+				function()
+					-- Get the entry under the cursor
+					local entry = require("oil").get_cursor_entry()
+					-- Print it in a human-readable format
+					print(vim.inspect(entry))
+				end,
+				desc = "[D]ebug: [I]nspect oil entry",
+			},
+			{
+				"gy",
+				function()
+					-- 1. 获取当前 oil 窗口正在浏览的目录路径
+					local dir = require("oil").get_current_dir()
+
+					-- 2. 获取光标下条目的信息 (主要需要它的名字)
+					local entry = require("oil").get_cursor_entry()
+
+					-- 3. 确保我们成功获取了目录和条目信息
+					if dir and entry and entry.name then
+						-- 4. 使用 vim 的标准函数来安全地拼接路径 (这是最稳妥的做法)
+						local path = vim.fs.joinpath(dir, entry.name)
+
+						-- 5. 将拼接好的完整路径复制到系统剪贴板
+						vim.fn.setreg("+", path)
+						print("已复制路径: " .. path)
+					else
+						print("无法获取路径信息")
+					end
+				end,
+				desc = "Copy absolute path",
+			},
+			{
+				"<leader>fo", -- You can change this to any keybinding you like
+				function()
+					local default_path
+
+					-- 1. Check if the current buffer is an oil buffer
+					if vim.bo.filetype == "oil" then
+						-- If it is, get the buffer name (e.g., "oil:///path/to/dir")
+						local oil_buf_name = vim.api.nvim_buf_get_name(0)
+						-- Remove the "oil://" prefix to get the real file system path
+						-- The gsub function here replaces "oil://" at the start of the string with an empty string
+						default_path = vim.fn.fnamemodify(oil_buf_name:gsub("^oil://", ""), ":h")
+					else
+						local current_buf_name = vim.api.nvim_buf_get_name(0)
+						-- 2. If it's a regular buffer, check if it has a file name
+						if current_buf_name ~= "" then
+							-- If it has a name, use its directory as the default
+							default_path = vim.fn.expand("%:p:h")
+						else
+							-- 3. If it's a new/unnamed buffer, use the current working directory
+							default_path = vim.fn.getcwd()
+						end
+					end
+
+					local path_input = vim.fn.input({
+						prompt = "Open directory in Oil: ",
+						-- Ensure the default path always ends with a separator for a better user experience
+						default = default_path .. "/",
+						completion = "dir",
+					})
+
+					if path_input == "" then
+						print("Oil open cancelled.")
+						return
+					end
+
+					require("oil").open(vim.fn.expand(path_input))
+				end,
+				desc = "Open a directory in Oil with prompt",
+			},
+			-- {
+			-- 	"<leader>fo", -- 你可以把它改成任何你喜欢的快捷键
+			-- 	function()
+			-- 		-- 1. 调用内置输入函数，向用户索要路径
+			-- 		local path_input = vim.fn.input({
+			-- 			prompt = "Open directory in Oil: ",
+			-- 			-- 默认值：当前文件所在的目录。如果当前是新 buffer，则为当前工作目录
+			-- 			default = vim.fn.expand("%:p:h") .. "/",
+			-- 			-- 开启目录补全功能！你可以在输入时按 Tab
+			-- 			completion = "dir",
+			-- 		})
+			--
+			-- 		-- 2. 如果用户按 Esc 或直接回车（输入为空），则取消操作
+			-- 		if path_input == "" then
+			-- 			print("Oil open cancelled.")
+			-- 			return
+			-- 		end
+			--
+			-- 		-- 3. 使用 oil.open 打开用户输入的路径
+			-- 		--    我们用 vim.fn.expand 来处理像 '~' 这样的特殊字符
+			-- 		require("oil").open(vim.fn.expand(path_input))
+			-- 	end,
+			-- 	desc = "Open a directory in Oil with prompt",
+			-- },
+		},
+		-- 添加这个 config 函数
+		config = function(_, opts)
+			-- 调用默认的 setup 函数
+			require("oil").setup(opts)
+
+			-- 在这里放入你的自定义命令
+			vim.api.nvim_create_user_command("OilToggle", function()
+				local current_buf = vim.api.nvim_get_current_buf()
+				local current_filetype = vim.api.nvim_buf_get_option(current_buf, "filetype")
+
+				if current_filetype == "oil" then
+					-- We use a command to go to the previous buffer
+					vim.cmd("b#")
+				else
+					-- Open oil if not already in an oil buffer
+					vim.cmd("Oil")
+				end
+			end, { nargs = 0 })
+		end,
+	},
 	{
 		"windwp/nvim-autopairs",
 		-- Load the plugin only when entering insert mode
@@ -591,75 +646,132 @@ return {
 			require("window-picker").setup()
 		end,
 	},
+	-- {
+	-- 	"akinsho/bufferline.nvim",
+	-- 	version = "*",
+	-- 	dependencies = "nvim-tree/nvim-web-devicons",
+	-- 	opts = {
+	-- 		options = {
+	-- 			-- ... other options
+	-- 			-- This is the key for perfect integration
+	-- 			-- 这就是完美集成体验的关键
+	-- 			offsets = {
+	-- 				{
+	-- 					filetype = "NvimTree",
+	-- 					text = "File Explorer", -- You can customize the text
+	-- 					text_align = "left",
+	-- 					separator = true,
+	-- 				},
+	-- 			},
+	-- 			diagnostics = "nvim_lsp",
+	-- 		},
+	-- 	},
+	-- keys = {
+	-- 	{
+	-- 		"<leader>x", -- The key combination
+	-- 		function()
+	-- 			-- A slightly safer way to call the command
+	-- 			-- 一个稍微更安全的调用命令的方式
+	-- 			require("bufferline").close_buffer()
+	-- 		end,
+	-- 		mode = "n", -- Normal mode
+	-- 		desc = "Close current buffer", -- Description
+	-- 	},
+	-- 	-- A simpler way that should also work correctly with `keys`
+	-- 	-- { '<leader>c', '<Cmd>BufferLineClose<CR>', mode = 'n', desc = 'Close current buffer' }
+	-- },
+	-- 	config = function(_, opts)
+	-- 		require("bufferline").setup(opts) -- opts is passed from the main config
+	--
+	-- 		local keymap = vim.keymap
+	-- 		-- Cycle through buffers
+	-- 		keymap.set("n", "<Tab>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Cycle to next buffer" })
+	-- 		keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Cycle to previous buffer" })
+	-- 		keymap.set("n", "<leader>bn", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
+	-- 		keymap.set("n", "<leader>bp", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
+	--
+	-- 		-- Go to buffer by position
+	-- 		for i = 1, 9 do
+	-- 			keymap.set(
+	-- 				"n",
+	-- 				"<leader>" .. i,
+	-- 				"<Cmd>BufferLineGoToBuffer " .. i .. "<CR>",
+	-- 				{ desc = "Go to buffer " .. i }
+	-- 			)
+	-- 		end
+	--
+	-- 		-- 1. Close current buffer AND switch to another one (YOUR CORE REQUEST)
+	-- 		-- 这是你需求的核心：关闭当前buffer后，立即切换到另一个，避免白屏
+	-- 		keymap.set(
+	-- 			"n",
+	-- 			"<leader>x",
+	-- 			"<Cmd>bdelete<CR><Cmd>bnext || bprevious<CR>",
+	-- 			{ desc = "Close buffer and switch" }
+	-- 		)
+	-- 		-- 2. Pick a buffer to close (No change needed)
+	-- 		-- 这个命令是交互式的，它会等待你选择，所以我们不能在后面加命令
+	-- 		keymap.set("n", "<leader>p", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick a buffer to close" })
+	--
+	-- 		-- 3. Close all other buffers (No change needed)
+	-- 		-- 这个命令只关闭“其他”buffer，当前buffer会保留，所以它本身就是安全的
+	-- 		keymap.set("n", "<leader>a", "<Cmd>BufferLineCloseOthers<CR>", { desc = "Close all other buffers" })
+	-- 	end,
+	-- },
 	{
-		"akinsho/bufferline.nvim",
+		"akinsho/toggleterm.nvim",
 		version = "*",
-		dependencies = "nvim-tree/nvim-web-devicons",
-		opts = {
-			options = {
-				-- ... other options
-				-- This is the key for perfect integration
-				-- 这就是完美集成体验的关键
-				offsets = {
-					{
-						filetype = "NvimTree",
-						text = "File Explorer", -- You can customize the text
-						text_align = "left",
-						separator = true,
-					},
+		config = function()
+			require("toggleterm").setup({
+				-- size can be a number or a function
+				size = function(term)
+					if term.direction == "horizontal" then
+						return 15
+					elseif term.direction == "vertical" then
+						return vim.o.columns * 0.4
+					end
+				end,
+				open_mapping = [[<c-\>]],
+				-- hide the number column in toggleterm buffers
+				hide_numbers = true,
+				shade_filetypes = {},
+				shade_terminals = true,
+				-- a number between 1 and 100, default is 30
+				shading_factor = 2,
+				start_in_insert = true,
+				-- whether or not the open mapping applies in insert mode
+				insert_mappings = true,
+				-- whether or not the open mapping applies in the opened terminals
+				terminal_mappings = true,
+				persist_size = true,
+				-- 'vertical' | 'horizontal' | 'tab' | 'float'
+				direction = "float",
+				-- close the terminal window when the process exits
+				close_on_exit = true,
+				shell = vim.o.shell,
+				auto_scroll = true,
+				-- This field is only relevant if direction is set to 'float'
+				float_opts = {
+					-- 'single' | 'double' | 'shadow' | 'curved'
+					border = "single",
+					width = function()
+						return math.ceil(vim.o.columns * 0.8)
+					end,
+					height = function()
+						return math.ceil(vim.o.lines * 0.8)
+					end,
+					winblend = 3,
 				},
-				diagnostics = "nvim_lsp",
-			},
-		},
-		-- keys = {
-		-- 	{
-		-- 		"<leader>x", -- The key combination
-		-- 		function()
-		-- 			-- A slightly safer way to call the command
-		-- 			-- 一个稍微更安全的调用命令的方式
-		-- 			require("bufferline").close_buffer()
-		-- 		end,
-		-- 		mode = "n", -- Normal mode
-		-- 		desc = "Close current buffer", -- Description
-		-- 	},
-		-- 	-- A simpler way that should also work correctly with `keys`
-		-- 	-- { '<leader>c', '<Cmd>BufferLineClose<CR>', mode = 'n', desc = 'Close current buffer' }
-		-- },
-		config = function(_, opts)
-			require("bufferline").setup(opts) -- opts is passed from the main config
-
-			local keymap = vim.keymap
-			-- Cycle through buffers
-			keymap.set("n", "<Tab>", "<Cmd>BufferLineCycleNext<CR>", { desc = "Cycle to next buffer" })
-			keymap.set("n", "<S-Tab>", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Cycle to previous buffer" })
-			keymap.set("n", "<leader>bn", "<Cmd>BufferLineCycleNext<CR>", { desc = "Next buffer" })
-			keymap.set("n", "<leader>bp", "<Cmd>BufferLineCyclePrev<CR>", { desc = "Previous buffer" })
-
-			-- Go to buffer by position
-			for i = 1, 9 do
-				keymap.set(
-					"n",
-					"<leader>" .. i,
-					"<Cmd>BufferLineGoToBuffer " .. i .. "<CR>",
-					{ desc = "Go to buffer " .. i }
-				)
-			end
-
-			-- 1. Close current buffer AND switch to another one (YOUR CORE REQUEST)
-			-- 这是你需求的核心：关闭当前buffer后，立即切换到另一个，避免白屏
-			keymap.set(
-				"n",
-				"<leader>x",
-				"<Cmd>bdelete<CR><Cmd>bnext || bprevious<CR>",
-				{ desc = "Close buffer and switch" }
-			)
-			-- 2. Pick a buffer to close (No change needed)
-			-- 这个命令是交互式的，它会等待你选择，所以我们不能在后面加命令
-			keymap.set("n", "<leader>p", "<Cmd>BufferLinePickClose<CR>", { desc = "Pick a buffer to close" })
-
-			-- 3. Close all other buffers (No change needed)
-			-- 这个命令只关闭“其他”buffer，当前buffer会保留，所以它本身就是安全的
-			keymap.set("n", "<leader>a", "<Cmd>BufferLineCloseOthers<CR>", { desc = "Close all other buffers" })
+				winbar = {
+					enabled = false,
+					name_formatter = function(term) --  term: Terminal
+						return term.name
+					end,
+				},
+				-- Callbacks are for advanced usage, you can uncomment and define them if needed
+				-- on_create = function(t) vim.print("Terminal created") end,
+				-- on_open = function(t) vim.print("Terminal opened") end,
+				-- on_close = function(t) vim.print("Terminal closed") end,
+			})
 		end,
 	},
 }

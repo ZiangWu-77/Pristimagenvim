@@ -25,7 +25,7 @@ vim.opt.hlsearch = false -- do not highlight matches
 vim.opt.ignorecase = true -- ignore case in searches by default
 vim.opt.smartcase = true -- but make it case sensitive if an uppercase is entered
 -- For h and l wrapping on line ends
-vim.opt.whichwrap:append("<,>,h,l")
+-- vim.opt.whichwrap:append("<,>,h,l")
 
 -- For j and k wrapping at file top/bottom, using concise expressions
 -- local opts = { expr = true, silent = true, desc = "上下环绕" }
